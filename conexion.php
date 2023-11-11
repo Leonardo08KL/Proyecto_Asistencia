@@ -1,17 +1,46 @@
 <?php
-//servidor, usuario de base de datos, contraseña del usuario, nombre de base de datos
+// Verificar si el formulario ha sido enviado
+if ($_SERVER["REQUEST_METHOD"] == "POST") {
+    // Recuperar los datos del formulario
+    $nombre = $_POST["Nombre"];
+    $apellido_paterno = $_POST["Apellidop"];
+    $apellido_materno = $_POST["Apellidom"];
+    $correo = $_POST["Email"];
+    $contrasena = password_hash($_POST["pass"], PASSWORD_DEFAULT); // Hash de la contraseña
 
-$localhost = 'localhost:3306';
-$username = 'root';
-$password = '';
-$dbname = 'asistencia';
+    // Conexión a la base de datos (modifica los valores según tu configuración)
+    $servername = "localhost:3306";
+    $username = "root'";
+    $password = "";
+    $dbname = "asistencia";
 
-$conn = mysqli_connect($localhost, $username, $password, $dbname);
+    $conn = new mysqli($servername, $username, $password, $dbname);
 
-if (!$conn) {
-    die("Error en la conexión: " . mysqli_connect_error());
-} else{
-    echo "Conexion establecida";
+    // Verificar la conexión
+    if ($conn->connect_error) {
+        die("Conexión fallida: " . $conn->connect_error);
+    }
+
+    // Insertar datos en la tabla usuarios
+    $sqlUsuarios = "INSERT INTO usuarios (nombre, apellido_paterno, apellido_materno, cve_cuenta) VALUES ('$nombre', '$apellido_paterno', '$apellido_materno', '$cve_cuenta')";
+
+    if ($conn->query($sqlUsuarios) === TRUE) {
+        // Obtener el ID del último registro insertado en la tabla usuarios
+        $usuarioID = $conn->insert_id;
+
+        // Insertar datos en la tabla cuenta
+        $sqlCuenta = "INSERT INTO cuenta (correo, contraseña) VALUES ('$correo', '$contrasena')";
+
+        if ($conn->query($sqlCuenta) === TRUE) {
+            echo "Registro exitoso";
+        } else {
+            echo "Error al insertar en la tabla cuenta: " . $conn->error;
+        }
+    } else {
+        echo "Error al insertar en la tabla usuarios: " . $conn->error;
+    }
+
+    // Cerrar la conexión
+    $conn->close();
 }
-
 ?>
