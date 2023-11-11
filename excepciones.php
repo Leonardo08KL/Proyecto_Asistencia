@@ -1,24 +1,46 @@
-<?php
-if ($_SERVER["REQUEST_METHOD"] == "POST") {
-    // Recuperar los datos del formulario
-    $nombre = $_POST["Nombre"];
-    $apellido_paterno = $_POST["Apellidop"];
-    $apellido_materno = $_POST["Apellidom"];
-    $correo = $_POST["Email"];
-    $contrasena = $_POST["pass"];
+<?php  
+$nombre = $_POST['nombre'];
+$a_paterno = $_POST['apellido_paterno'];
+$a_materno = $_POST['apellido_materno'];
+$correo = $_POST['correo'];
+$contrasena = $_POST['contrasena'];
 
-    // Aquí puedes realizar cualquier validación o procesamiento adicional
+$connectionDB = new connectionDB();
 
-    // Mostrar los datos (esto es solo un ejemplo, no se debe hacer en un entorno de producción)
-    echo "Nombre: $nombre<br>";
-    echo "Apellido Paterno: $apellido_paterno<br>";
-    echo "Apellido Materno: $apellido_materno<br>";
-    echo "Correo Electrónico: $correo<br>";
-    // No imprimas contraseñas en un entorno de producción, esto es solo con fines educativos
-    echo "Contraseña: $contrasena";
-} else {
-    // Si alguien intenta acceder directamente a este script sin enviar datos por POST, redirigirlo al formulario
-    header("Location: Registro.html");
-    exit();
+if($connectionDB->comprobarCorreoDuplicado($correo)){
+    header("Location: ./Registro.html?enviado=true");
+    exit;
+} else{
+
 }
+
+?>
+
+<?php 
+
+
+class connectionDB{
+
+    public static function comprobarCorreoDuplicado($correo){
+        require ('./conexion.php');
+ 
+        $correo = mysqli_real_escape_string($conn, $correo);
+
+        $sql = "SELECT correo
+        from cuenta where correo = '$correo';";
+
+        $result = mysqli_query($conn, $sql);
+
+        if (mysqli_num_rows($result) > 0) {
+            // Cerrar la conexión a la base de datos
+            mysqli_close($conn);
+            return true;
+        } else {
+            // Cerrar la conexión a la base de datos
+            mysqli_close($conn);
+            return false;
+        }
+    }
+}
+
 ?>
