@@ -22,20 +22,12 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     }
 
     // Insertar datos en la tabla usuarios
-    $sqlUsuarios = "INSERT INTO usuarios (nombre, apellido_paterno, apellido_materno, cve_cuenta) VALUES ('$nombre', '$apellido_paterno', '$apellido_materno', '$cve_cuenta')";
+    $sqlUsuarios = "INSERT INTO usuarios (nombre, apellido_paterno, apellido_materno, correo, contraseña) VALUES ('$nombre', '$apellido_paterno', '$apellido_materno', '$correo', $contrasena)";
 
     if ($conn->query($sqlUsuarios) === TRUE) {
         // Obtener el ID del último registro insertado en la tabla usuarios
         $usuarioID = $conn->insert_id;
-
-        // Insertar datos en la tabla cuenta
-        $sqlCuenta = "INSERT INTO cuenta (correo, contraseña) VALUES ('$correo', '$contrasena')";
-
-        if ($conn->query($sqlCuenta) === TRUE) {
-            echo "Registro exitoso";
-        } else {
-            echo "Error al insertar en la tabla cuenta: " . $conn->error;
-        }
+        echo "Registro exitoso";
     } else {
         echo "Error al insertar en la tabla usuarios: " . $conn->error;
     }
